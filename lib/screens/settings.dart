@@ -12,6 +12,7 @@ class SettingsScreen extends StatelessWidget {
     return SafeArea(
       child: Container(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text('this is a settings screen'),
             MaterialButton(

@@ -9,11 +9,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 class Journal {
   List<Entry> _entries = [];
 
-  Future<List<Entry>> getEntries() async {
+  // gets the journal entries from firebase
+  Future<List<Entry>> getEntries({bool refresh = false}) async {
     // if the entries are already there, just return them.
-    if (_entries.isNotEmpty) {
+    if (_entries.isNotEmpty && !refresh) {
       return _entries;
     }
+
+    // reset the entries since we're adding them again below
+    _entries = [];
 
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     String userEmail = FirebaseAuth.instance.currentUser.email;
@@ -41,5 +45,10 @@ class Journal {
     });
 
     return _entries;
+  }
+
+  // forces a refresh of the entries
+  Future<void> refreshEntries() async {
+    await getEntries(refresh: true);
   }
 }

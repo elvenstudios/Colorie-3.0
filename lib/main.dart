@@ -2,6 +2,7 @@ import 'package:colorie_three/screens/authentication.dart';
 import 'package:colorie_three/screens/home.dart';
 import 'package:colorie_three/screens/search.dart';
 import 'package:colorie_three/screens/settings.dart';
+import 'package:colorie_three/screens/splash.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -80,7 +81,6 @@ class _MyAppState extends State<MyApp> {
             if (snapshot.connectionState == ConnectionState.done) {
               // set the auth listeners
               _registerAuthListeners();
-
               return Scaffold(
                 body: Center(
                   child: _authenticated ? _widgetOptions.elementAt(_selectedTab) : AuthenticationScreen(),
@@ -104,13 +104,14 @@ class _MyAppState extends State<MyApp> {
                         currentIndex: _selectedTab,
                         selectedItemColor: Colors.deepPurple,
                         onTap: _onTabTap,
+                        elevation: 0,
                       )
                     : null,
               );
             }
 
-            // otherwise show the splash screen // TODO: get a splash screen
-            return CircularProgressIndicator();
+            // otherwise show the splash screen
+            return SplashScreen();
           }),
     );
   }

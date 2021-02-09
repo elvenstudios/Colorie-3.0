@@ -21,11 +21,13 @@ class Journal {
 
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     String userEmail = FirebaseAuth.instance.currentUser.email;
+    DateTime date = DateTime.now();
 
     // access all journals
     DocumentReference journals = firestore.collection('journals').doc(userEmail);
     // access the all entries for the given users journal
-    QuerySnapshot userJournalEntries = await journals.collection('entries').get();
+    QuerySnapshot userJournalEntries =
+        await journals.collection('entries').doc('${date.month}-${date.day}-${date.year}').collection('food').get();
 
     userJournalEntries.docs.forEach((QueryDocumentSnapshot snapshot) {
       Map<String, dynamic> data = snapshot.data();
@@ -50,5 +52,27 @@ class Journal {
   // forces a refresh of the entries
   Future<void> refreshEntries() async {
     await getEntries(refresh: true);
+  }
+
+  // adds an entry to the journal
+  void addEntry(Entry entry) {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    String userEmail = FirebaseAuth.instance.currentUser.email;
+    DateTime date = DateTime.now();
+
+    // access all journals
+    DocumentReference journals = firestore.collection('journals').doc(userEmail);
+    // access the all entries for the given users journal
+    CollectionReference userJournalEntries = journals.collection('entries');
+
+    userJournalEntries.doc('${date.month}-${date.day}-${date.year}').collection('food').add({
+      'count': entry.count,
+      'food': {
+        'name': entry.food.name,
+        'calories': entry.food.calories,
+        'grams': entry.food.grams,
+        'ml': entry.food.ml
+      },
+    });
   }
 }

@@ -34,6 +34,8 @@ class _SearchScreenState extends State<SearchScreen> {
                     border: OutlineInputBorder(borderSide: BorderSide(color: Colors.deepPurple)),
                     labelText: 'Name',
                   ),
+                  autofocus: true,
+                  autocorrect: true,
                 ),
               ),
             ),

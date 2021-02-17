@@ -1,8 +1,10 @@
 import 'package:colorie_three/models/entry.dart';
 import 'package:colorie_three/models/journal.dart';
+import 'package:colorie_three/providers/journal_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -10,10 +12,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Journal journal = Journal();
-
   @override
   Widget build(BuildContext context) {
+    Journal journal = Provider.of<JournalProvider>(context).journal;
+
     return SafeArea(
       child: Container(
         child: Column(
@@ -29,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   return Column(
                     children: [
                       ...entries.map((Entry entry) {
-                        return Text('${entry.count} x ${entry.food.name}');
+                        return Text('${entry.count} x ${entry.food.name} -- Color: ${entry.food.colorName}');
                       }).toList()
                     ],
                   );

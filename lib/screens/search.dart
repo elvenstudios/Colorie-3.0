@@ -1,6 +1,11 @@
+import 'package:colorie_three/models/entry.dart';
+import 'package:colorie_three/models/journal.dart';
+import 'package:colorie_three/models/solid.dart';
+import 'package:colorie_three/providers/journal_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:provider/provider.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -17,7 +22,7 @@ class _SearchScreenState extends State<SearchScreen> {
     });
   }
 
-  Widget _buildBottomSheet(BuildContext context) {
+  Widget _buildBottomSheet(BuildContext context, Journal journal) {
     return StatefulBuilder(builder: (BuildContext context, StateSetter stateSetter) {
       return Container(
         padding: MediaQuery.of(context).viewInsets,
@@ -107,10 +112,66 @@ class _SearchScreenState extends State<SearchScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    Row(
+                      children: [
+                        Text(
+                          '1', // TODO: allow to increase count
+                          style: TextStyle(
+                            color: Colors.deepPurple,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          child: GestureDetector(
+                            onTap: () => {},
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(100)),
+                                color: Colors.deepPurple,
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 8),
+                                child: Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => {},
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(100)),
+                              color: Colors.deepPurple,
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 8),
+                              child: Icon(
+                                Icons.remove,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                     MaterialButton(
-                      onPressed: () => {},
+                      onPressed: () => journal.addEntry(
+                        Entry(
+                          count: 1,
+                          food: Solid(
+                            name: 'Test',
+                            grams: 2,
+                            calories: 200,
+                          ),
+                        ),
+                      ),
                       child: Text('Submit'),
                       color: Colors.deepPurple,
                       disabledColor: Colors.deepPurple.withOpacity(.25),
@@ -129,6 +190,8 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    Journal journal = Provider.of<JournalProvider>(context).journal;
+
     return Scaffold(
       body: WillPopScope(
         onWillPop: () async {
@@ -162,7 +225,7 @@ class _SearchScreenState extends State<SearchScreen> {
             onTap: () {
               showModalBottomSheet(
                 context: context,
-                builder: (BuildContext context) => _buildBottomSheet(context),
+                builder: (BuildContext context) => _buildBottomSheet(context, journal),
                 isScrollControlled: true,
               );
             },

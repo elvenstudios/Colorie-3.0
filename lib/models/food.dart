@@ -25,4 +25,15 @@ abstract class Food {
 
     return Colors.red;
   }
+
+  String get colorName {
+    double density = calories / grams ?? ml;
+    if (density <= green) {
+      return 'green';
+    } else if (density <= yellow) {
+      return 'yellow';
+    }
+
+    return 'red';
+  }
 }

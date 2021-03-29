@@ -7,51 +7,38 @@ import 'package:firebase_auth/firebase_auth.dart';
 /// A log of [Entry]'s.
 ///
 class Journal {
-  List<Entry> _entries = [];
-
-  // gets the journal entries from firebase
-  Future<List<Entry>> getEntries({bool refresh = false}) async {
-    // if the entries are already there, just return them.
-    if (_entries.isNotEmpty && !refresh) {
-      return _entries;
-    }
-
-    // reset the entries since we're adding them again below
-    _entries = [];
-
+  Stream entries() {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
+    // access all journals
     String userEmail = FirebaseAuth.instance.currentUser.email;
     DateTime date = DateTime.now();
-
-    // access all journals
     DocumentReference journals = firestore.collection('journals').doc(userEmail);
-    // access the all entries for the given users journal
-    QuerySnapshot userJournalEntries =
-        await journals.collection('entries').doc('${date.month}-${date.day}-${date.year}').collection('food').get();
 
-    userJournalEntries.docs.forEach((QueryDocumentSnapshot snapshot) {
+    // access the all entries for the given users journal
+    return journals
+        .collection('entries')
+        .doc('${date.month}-${date.day}-${date.year}')
+        .collection('food')
+        .orderBy('timestamp')
+        .snapshots();
+  }
+
+  // gets the journal entries from firebase
+  List<Entry> mapEntries(List<QueryDocumentSnapshot> docs) {
+    return docs.map((QueryDocumentSnapshot snapshot) {
       Map<String, dynamic> data = snapshot.data();
       Map<String, dynamic> food = data['food'];
 
-      _entries.add(
-        Entry(
-          count: data['count'],
-          food: Solid(
-            name: food['name'],
-            calories: food['calories'],
-            grams: food['grams'],
-            ml: food['ml'],
-          ),
+      return Entry(
+        count: data['count'],
+        food: Solid(
+          name: food['name'],
+          calories: food['calories'],
+          grams: food['grams'],
+          ml: food['ml'],
         ),
       );
-    });
-
-    return _entries;
-  }
-
-  // forces a refresh of the entries
-  Future<void> refreshEntries() async {
-    await getEntries(refresh: true);
+    }).toList();
   }
 
   // adds an entry to the journal
@@ -73,6 +60,7 @@ class Journal {
         'grams': entry.food.grams,
         'ml': entry.food.ml
       },
+      'timestamp': date.toString()
     });
   }
 }

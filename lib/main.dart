@@ -104,7 +104,7 @@ class _MyAppState extends State<MyApp> {
                                 ),
                                 BottomNavigationBarItem(
                                   icon: Icon(Icons.control_point),
-                                  label: 'Search',
+                                  label: 'Log',
                                 ),
                                 BottomNavigationBarItem(
                                   icon: Icon(Icons.settings),

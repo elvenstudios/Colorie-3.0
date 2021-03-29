@@ -27,6 +27,9 @@ class _HomeScreenState extends State<HomeScreen> {
           child: ListTile(title: Text(entry.food.name)),
           key: Key(entry.toString()),
           onDismissed: (DismissDirection direction) => journal.deleteEntry(entry),
+          background: Container(
+            color: Colors.red,
+          ),
         );
       },
     );

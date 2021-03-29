@@ -30,6 +30,10 @@ class _SearchScreenState extends State<SearchScreen> {
     });
   }
 
+  bool _showButton() {
+    return nameController.text != '' && caloriesController.text != '' && volumeController.text != '';
+  }
+
   Color _getFoodColor() {
     if (caloriesController.text != '' && volumeController.text != '') {
       return _calculateFood().color;
@@ -134,6 +138,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
                 child: TextField(
                   controller: caloriesController,
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Calories',
@@ -147,6 +152,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
                 child: TextField(
                   controller: volumeController,
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: _selected == 0 ? 'Grams' : 'Milliliters',
@@ -220,15 +226,17 @@ class _SearchScreenState extends State<SearchScreen> {
                       ],
                     ),
                     MaterialButton(
-                      onPressed: () {
-                        journal.addEntry(
-                          Entry(
-                            count: _count,
-                            food: _calculateFood(),
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
+                      onPressed: _showButton()
+                          ? () {
+                              journal.addEntry(
+                                Entry(
+                                  count: _count,
+                                  food: _calculateFood(),
+                                ),
+                              );
+                              Navigator.pop(context);
+                            }
+                          : null,
                       child: Text('Submit'),
                       color: Colors.deepPurple,
                       disabledColor: Colors.deepPurple.withOpacity(.25),

@@ -37,6 +37,8 @@ class Journal {
           grams: food['grams'],
           ml: food['ml'],
         ),
+        timestamp: data['timestamp'],
+        id: snapshot.id,
       );
     }).toList();
   }
@@ -62,5 +64,17 @@ class Journal {
       },
       'timestamp': date.toString()
     });
+  }
+
+  void deleteEntry(Entry entry) {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    String userEmail = FirebaseAuth.instance.currentUser.email;
+    DateTime date = DateTime.now();
+
+    // access all journals
+    DocumentReference journals = firestore.collection('journals').doc(userEmail);
+    // access the all entries for the given users journal
+    CollectionReference userJournalEntries = journals.collection('entries');
+    userJournalEntries.doc('${date.month}-${date.day}-${date.year}').collection('food').doc(entry.id).delete();
   }
 }

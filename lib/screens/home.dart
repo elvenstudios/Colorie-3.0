@@ -3,6 +3,7 @@ import 'package:colorie_three/models/entry.dart';
 import 'package:colorie_three/models/journal.dart';
 import 'package:colorie_three/providers/journal_provider.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -16,12 +17,18 @@ class _HomeScreenState extends State<HomeScreen> {
     Journal journal = Provider.of<JournalProvider>(context).journal;
 
     QuerySnapshot snap = snapshot.data;
-    return Column(
-      children: [
-        ...journal.mapEntries(snap.docs).map((Entry entry) {
-          return Text('${entry.count} x ${entry.food.name} -- Color: ${entry.food.colorName}');
-        }).toList()
-      ],
+    List<Entry> children = journal.mapEntries(snap.docs).toList();
+
+    return ListView.builder(
+      itemCount: children.length,
+      itemBuilder: (context, index) {
+        Entry entry = children[index];
+        return Dismissible(
+          child: ListTile(title: Text(entry.food.name)),
+          key: Key(entry.toString()),
+          onDismissed: (DismissDirection direction) => journal.deleteEntry(entry),
+        );
+      },
     );
   }
 

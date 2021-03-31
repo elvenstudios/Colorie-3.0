@@ -16,4 +16,9 @@ class Entry {
   String toString() {
     return '${food.name}-$count-$timestamp';
   }
+
+  // returns food calories times entry count
+  num get totalCalories {
+    return food.calories * count;
+  }
 }

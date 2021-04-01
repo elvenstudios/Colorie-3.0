@@ -72,118 +72,145 @@ class _SearchScreenState extends State<SearchScreen> {
     // always set count to 1 when the modal opens.
     _count = 1;
     return StatefulBuilder(builder: (BuildContext context, StateSetter stateSetter) {
-      return Container(
-        padding: MediaQuery.of(context).viewInsets,
-        color: Colors.white70,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
-                child: TextField(
-                  controller: nameController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(borderSide: BorderSide(color: Colors.deepPurple)),
-                    labelText: 'Name',
+      return SafeArea(
+        child: Container(
+          color: Colors.white70,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+                  child: TextField(
+                    controller: nameController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(borderSide: BorderSide(color: Colors.deepPurple)),
+                      labelText: 'Name',
+                    ),
+                    autofocus: true,
+                    autocorrect: true,
+                    onChanged: (String value) =>
+                        stateSetter(() {/* set state to refresh the UI for the button color */}),
                   ),
-                  autofocus: true,
-                  autocorrect: true,
-                  onChanged: (String value) => stateSetter(() {/* set state to refresh the UI for the button color */}),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
-              child: Row(
-                children: [
-                  ChoiceChip(
-                    label: Text(
-                      'Solid',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    selected: _selected == 0,
-                    disabledColor: Colors.grey,
-                    selectedColor: Colors.deepPurple,
-                    onSelected: (bool selected) => _setSelected(0, stateSetter),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: ChoiceChip(
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+                child: Row(
+                  children: [
+                    ChoiceChip(
                       label: Text(
-                        'Liquid',
+                        'Solid',
                         style: TextStyle(color: Colors.white),
                       ),
-                      selected: _selected == 1,
+                      selected: _selected == 0,
                       disabledColor: Colors.grey,
                       selectedColor: Colors.deepPurple,
-                      onSelected: (bool selected) => _setSelected(1, stateSetter),
+                      onSelected: (bool selected) => _setSelected(0, stateSetter),
                     ),
-                  ),
-                  ChoiceChip(
-                    label: Text(
-                      'Soup',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    selected: _selected == 2,
-                    disabledColor: Colors.grey,
-                    selectedColor: Colors.deepPurple,
-                    onSelected: (bool selected) => _setSelected(2, stateSetter),
-                  ),
-                ],
-              ),
-            ),
-            Flexible(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
-                child: TextField(
-                  controller: caloriesController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Calories',
-                  ),
-                  onChanged: (String value) => stateSetter(() {/* set state to refresh the UI for the button color */}),
-                ),
-              ),
-            ),
-            Flexible(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
-                child: TextField(
-                  controller: volumeController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: _selected == 0 ? 'Grams' : 'Milliliters',
-                  ),
-                  onChanged: (String value) => stateSetter(() {/* set state to refresh the UI for the button color */}),
-                ),
-              ),
-            ),
-            Flexible(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          '$_count',
-                          style: TextStyle(
-                            color: Colors.deepPurple,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
-                          ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: ChoiceChip(
+                        label: Text(
+                          'Liquid',
+                          style: TextStyle(color: Colors.white),
                         ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8.0),
-                          child: GestureDetector(
+                        selected: _selected == 1,
+                        disabledColor: Colors.grey,
+                        selectedColor: Colors.deepPurple,
+                        onSelected: (bool selected) => _setSelected(1, stateSetter),
+                      ),
+                    ),
+                    ChoiceChip(
+                      label: Text(
+                        'Soup',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      selected: _selected == 2,
+                      disabledColor: Colors.grey,
+                      selectedColor: Colors.deepPurple,
+                      onSelected: (bool selected) => _setSelected(2, stateSetter),
+                    ),
+                  ],
+                ),
+              ),
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+                  child: TextField(
+                    controller: caloriesController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Calories',
+                    ),
+                    onChanged: (String value) =>
+                        stateSetter(() {/* set state to refresh the UI for the button color */}),
+                  ),
+                ),
+              ),
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+                  child: TextField(
+                    controller: volumeController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: _selected == 0 ? 'Grams' : 'Milliliters',
+                    ),
+                    onChanged: (String value) =>
+                        stateSetter(() {/* set state to refresh the UI for the button color */}),
+                  ),
+                ),
+              ),
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            '$_count',
+                            style: TextStyle(
+                              color: Colors.deepPurple,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                            child: GestureDetector(
+                              onTap: () => {
+                                stateSetter(() {
+                                  _count++;
+                                })
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(Radius.circular(100)),
+                                  color: Colors.deepPurple,
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 8),
+                                  child: Icon(
+                                    Icons.add,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
                             onTap: () => {
-                              stateSetter(() {
-                                _count++;
-                              })
+                              if (_count > 1)
+                                {
+                                  stateSetter(() {
+                                    _count--;
+                                  })
+                                }
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -193,67 +220,44 @@ class _SearchScreenState extends State<SearchScreen> {
                               child: Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 8),
                                 child: Icon(
-                                  Icons.add,
+                                  Icons.remove,
                                   color: Colors.white,
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => {
-                            if (_count > 1)
-                              {
-                                stateSetter(() {
-                                  _count--;
-                                })
+                          )
+                        ],
+                      ),
+                      MaterialButton(
+                        onPressed: _showButton()
+                            ? () {
+                                journal.addEntry(
+                                  Entry(
+                                    count: _count,
+                                    food: _calculateFood(),
+                                  ),
+                                );
+                                Navigator.pop(context);
                               }
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(100)),
-                              color: Colors.deepPurple,
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 8),
-                              child: Icon(
-                                Icons.remove,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    MaterialButton(
-                      onPressed: _showButton()
-                          ? () {
-                              journal.addEntry(
-                                Entry(
-                                  count: _count,
-                                  food: _calculateFood(),
-                                ),
-                              );
-                              Navigator.pop(context);
-                            }
-                          : null,
-                      child: Text('Submit'),
-                      color: Colors.deepPurple,
-                      disabledColor: Colors.deepPurple.withOpacity(.25),
-                      textColor: Colors.white,
-                      disabledTextColor: Colors.white, // TODO: disable button until form is filled
-                    ),
-                  ],
+                            : null,
+                        child: Text('Submit'),
+                        color: Colors.deepPurple,
+                        disabledColor: Colors.deepPurple.withOpacity(.25),
+                        textColor: Colors.white,
+                        disabledTextColor: Colors.white, // TODO: disable button until form is filled
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Divider(
-              color: _getFoodColor(),
-              thickness: 4,
-              indent: 16,
-              endIndent: 16,
-            )
-          ],
+              Divider(
+                color: _getFoodColor(),
+                thickness: 4,
+                indent: 16,
+                endIndent: 16,
+              )
+            ],
+          ),
         ),
       );
     });

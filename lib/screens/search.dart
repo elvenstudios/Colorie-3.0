@@ -18,11 +18,11 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   ValueNotifier<bool> isDialOpen = ValueNotifier(false);
   int _selected = 0;
-  int _count = 0;
 
   final TextEditingController nameController = TextEditingController(); // food name
   final TextEditingController caloriesController = TextEditingController(); // food calories
   final TextEditingController volumeController = TextEditingController(); // grams or milliliters
+  final TextEditingController servingsController = TextEditingController()..text = '1'; // number of servings
 
   void _setSelected(int val, StateSetter setModalState) {
     setModalState(() {
@@ -31,7 +31,11 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   bool _showButton() {
-    return nameController.text != '' && caloriesController.text != '' && volumeController.text != '';
+    return nameController.text != '' &&
+        caloriesController.text != '' &&
+        volumeController.text != '' &&
+        servingsController.text != '' &&
+        double.parse(servingsController.text) > 0;
   }
 
   Color _getFoodColor() {
@@ -68,9 +72,29 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
+  // shows a dialog for new features coming soon
+  Future<void> _showDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('New Feature'),
+          content: Text('This feature is coming soon!'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Nice!'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildBottomSheet(BuildContext context, Journal journal) {
-    // always set count to 1 when the modal opens.
-    _count = 1;
     return StatefulBuilder(builder: (BuildContext context, StateSetter stateSetter) {
       return SafeArea(
         child: Container(
@@ -89,8 +113,9 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                     autofocus: true,
                     autocorrect: true,
-                    onChanged: (String value) =>
-                        stateSetter(() {/* set state to refresh the UI for the button color */}),
+                    onChanged: (String value) => stateSetter(
+                      () {/* set state to refresh the UI for the button color */},
+                    ),
                   ),
                 ),
               ),
@@ -144,8 +169,9 @@ class _SearchScreenState extends State<SearchScreen> {
                       border: OutlineInputBorder(),
                       labelText: 'Calories',
                     ),
-                    onChanged: (String value) =>
-                        stateSetter(() {/* set state to refresh the UI for the button color */}),
+                    onChanged: (String value) => stateSetter(
+                      () {/* set state to refresh the UI for the button color */},
+                    ),
                   ),
                 ),
               ),
@@ -159,8 +185,25 @@ class _SearchScreenState extends State<SearchScreen> {
                       border: OutlineInputBorder(),
                       labelText: _selected == 0 ? 'Grams' : 'Milliliters',
                     ),
-                    onChanged: (String value) =>
-                        stateSetter(() {/* set state to refresh the UI for the button color */}),
+                    onChanged: (String value) => stateSetter(
+                      () {/* set state to refresh the UI for the button color */},
+                    ),
+                  ),
+                ),
+              ),
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
+                  child: TextField(
+                    controller: servingsController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Servings',
+                    ),
+                    onChanged: (String value) => stateSetter(
+                      () {/* set state to refresh the UI for the button color */},
+                    ),
                   ),
                 ),
               ),
@@ -168,72 +211,14 @@ class _SearchScreenState extends State<SearchScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            '$_count',
-                            style: TextStyle(
-                              color: Colors.deepPurple,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24,
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 8.0),
-                            child: GestureDetector(
-                              onTap: () => {
-                                stateSetter(() {
-                                  _count++;
-                                })
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(Radius.circular(100)),
-                                  color: Colors.deepPurple,
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8),
-                                  child: Icon(
-                                    Icons.add,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: () => {
-                              if (_count > 1)
-                                {
-                                  stateSetter(() {
-                                    _count--;
-                                  })
-                                }
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(100)),
-                                color: Colors.deepPurple,
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 8),
-                                child: Icon(
-                                  Icons.remove,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
                       MaterialButton(
                         onPressed: _showButton()
                             ? () {
                                 journal.addEntry(
                                   Entry(
-                                    count: _count,
+                                    count: double.parse(servingsController.text),
                                     food: _calculateFood(),
                                   ),
                                 );
@@ -305,26 +290,26 @@ class _SearchScreenState extends State<SearchScreen> {
               );
             },
           ),
-//          SpeedDialChild(
-//            child: Icon(
-//              Icons.camera_alt,
-//              color: Colors.white,
-//            ),
-//            backgroundColor: Colors.deepPurpleAccent.shade200,
-//            label: 'Scan a Barcode',
-//            labelStyle: TextStyle(fontSize: 18.0),
-//            onTap: () => print('SECOND CHILD'),
-//          ),
-//          SpeedDialChild(
-//            child: Icon(
-//              Icons.search,
-//              color: Colors.white,
-//            ),
-//            backgroundColor: Colors.deepPurpleAccent.shade100,
-//            label: 'Search Online',
-//            labelStyle: TextStyle(fontSize: 18.0),
-//            onTap: () => print('SECOND CHILD'),
-//          ),
+          SpeedDialChild(
+            child: Icon(
+              Icons.camera_alt,
+              color: Colors.white,
+            ),
+            backgroundColor: Colors.deepPurpleAccent.shade200,
+            label: 'Scan a Barcode',
+            labelStyle: TextStyle(fontSize: 18.0),
+            onTap: _showDialog,
+          ),
+          SpeedDialChild(
+            child: Icon(
+              Icons.search,
+              color: Colors.white,
+            ),
+            backgroundColor: Colors.deepPurpleAccent.shade100,
+            label: 'Search Online',
+            labelStyle: TextStyle(fontSize: 18.0),
+            onTap: _showDialog,
+          ),
         ],
       ),
     );

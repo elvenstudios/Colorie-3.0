@@ -8,7 +8,7 @@ class Entry {
   Entry({this.food, this.count = 1, this.timestamp, this.id});
 
   final Food food;
-  final int count;
+  final double count;
   final String timestamp;
   final String id;
 

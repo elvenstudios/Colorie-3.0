@@ -23,6 +23,12 @@ class _HomeScreenState extends State<HomeScreen> {
     List<Entry> reds = children.where((Entry entry) => entry.food.colorName == 'red').toList();
     children = [...greens, ...yellows, ...reds];
 
+    if (children.isEmpty) {
+      return Container(
+        child: Text('You haven\'t logged any food for today'),
+      );
+    }
+
     return ListView.builder(
       itemCount: children.length,
       itemBuilder: (context, index) {

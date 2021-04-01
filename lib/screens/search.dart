@@ -263,7 +263,7 @@ class _SearchScreenState extends State<SearchScreen> {
         },
         child: Container(
           child: SafeArea(
-            child: Text('Log Some Food'),
+            child: Center(child: Text('Log Some Food')),
           ),
         ),
       ),

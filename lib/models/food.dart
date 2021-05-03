@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:colorie_three/styles/colors.dart' as AppColors;
 import 'package:flutter/material.dart';
 
 ///
@@ -18,12 +18,12 @@ abstract class Food {
   Color get color {
     double density = calories / grams ?? ml;
     if (density <= green) {
-      return Colors.green;
+      return AppColors.greenFood;
     } else if (density <= yellow) {
-      return Colors.yellow;
+      return AppColors.yellowFood;
     }
 
-    return Colors.red;
+    return AppColors.redFood;
   }
 
   String get colorName {

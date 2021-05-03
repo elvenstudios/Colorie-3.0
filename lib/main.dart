@@ -1,12 +1,13 @@
 import 'package:colorie_three/providers/journal_provider.dart';
 import 'package:colorie_three/screens/authentication.dart';
 import 'package:colorie_three/screens/home.dart';
-import 'package:colorie_three/screens/search.dart';
 import 'package:colorie_three/screens/settings.dart';
 import 'package:colorie_three/screens/splash.dart';
+import 'package:colorie_three/styles/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 import 'package:provider/provider.dart';
 
@@ -26,15 +27,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
-  int _selectedTab = 0;
   bool _authenticated = false;
-
-  // handle changing tabs
-  void _onTabTap(int index) {
-    setState(() {
-      _selectedTab = index;
-    });
-  }
 
   // adds listeners for auth status changes
   void _registerAuthListeners() {
@@ -50,7 +43,6 @@ class _MyAppState extends State<MyApp> {
       } else {
         if (!_authenticated) {
           setState(() {
-            _selectedTab = 0;
             _authenticated = true;
           });
         }
@@ -61,15 +53,17 @@ class _MyAppState extends State<MyApp> {
   // list of screens that the tabs represent
   List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
-    SearchScreen(),
+//    SearchScreen(),
     SettingsScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays([]);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        backgroundColor: backgroundColor,
         primarySwatch: Colors.deepPurple,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
@@ -83,7 +77,6 @@ class _MyAppState extends State<MyApp> {
                 builder: (context, snapshot) {
                   // handle firebase init errors
                   if (snapshot.hasError) {
-                    print(snapshot.error);
                     return Text('Oops, something went wrong');
                   }
 
@@ -92,31 +85,10 @@ class _MyAppState extends State<MyApp> {
                     // set the auth listeners
                     _registerAuthListeners();
                     return Scaffold(
+                      backgroundColor: backgroundColor,
                       body: Center(
-                        child: _authenticated ? _widgetOptions.elementAt(_selectedTab) : AuthenticationScreen(),
+                        child: _authenticated ? HomeScreen() : AuthenticationScreen(),
                       ),
-                      bottomNavigationBar: _authenticated
-                          ? BottomNavigationBar(
-                              items: const <BottomNavigationBarItem>[
-                                BottomNavigationBarItem(
-                                  icon: Icon(Icons.face),
-                                  label: 'Journal',
-                                ),
-                                BottomNavigationBarItem(
-                                  icon: Icon(Icons.control_point),
-                                  label: 'Log',
-                                ),
-                                BottomNavigationBarItem(
-                                  icon: Icon(Icons.settings),
-                                  label: 'Settings',
-                                ),
-                              ],
-                              currentIndex: _selectedTab,
-                              selectedItemColor: Colors.deepPurple,
-                              onTap: _onTabTap,
-                              elevation: 0,
-                            )
-                          : null,
                     );
                   }
 

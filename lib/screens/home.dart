@@ -263,6 +263,58 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Widget _buildActionButton(ValueNotifier<bool> isDialOpen, Journal journal) {
+    return SpeedDial(
+      openCloseDial: isDialOpen,
+      icon: Icons.add,
+      activeIcon: Icons.close,
+      iconTheme: IconThemeData(color: darkGrey),
+      backgroundColor: green,
+      overlayColor: lightGrey,
+      children: [
+        SpeedDialChild(
+          child: Icon(
+            Icons.calculate_rounded,
+            color: darkGrey,
+          ),
+          backgroundColor: green,
+          label: 'Enter Manually',
+          labelStyle: TextStyle(fontSize: 18.0, color: Colors.black),
+          labelBackgroundColor: lightGrey,
+          onTap: () {
+            showModalBottomSheet(
+              context: context,
+              builder: (BuildContext context) => _buildBottomSheet(context, journal),
+              isScrollControlled: true,
+            );
+          },
+        ),
+        SpeedDialChild(
+          child: Icon(
+            Icons.camera_alt,
+            color: darkGrey,
+          ),
+          backgroundColor: green,
+          label: 'Scan a Barcode',
+          labelStyle: TextStyle(fontSize: 18.0, color: Colors.black),
+          labelBackgroundColor: lightGrey,
+          onTap: _showDialog,
+        ),
+        SpeedDialChild(
+          child: Icon(
+            Icons.search,
+            color: darkGrey,
+          ),
+          backgroundColor: green,
+          label: 'Search Online',
+          labelStyle: TextStyle(fontSize: 18.0, color: Colors.black),
+          labelBackgroundColor: lightGrey,
+          onTap: _showDialog,
+        ),
+      ],
+    );
+  }
+
   /// renders the journal entries
   Widget _renderEntries(BuildContext context, AsyncSnapshot snapshot) {
     Journal journal = Provider.of<JournalProvider>(context).journal;
@@ -276,11 +328,24 @@ class _HomeScreenState extends State<HomeScreen> {
     children = [...greens, ...yellows, ...reds];
 
     if (children.isEmpty) {
-      return Container(
-        child: Text(
-          'You haven\'t logged any food for today',
-          style: TextStyle(color: primaryText, fontSize: 16, fontWeight: FontWeight.bold),
+      return Scaffold(
+        backgroundColor: backgroundColor,
+        body: WillPopScope(
+          onWillPop: () async {
+            if (isDialOpen.value) {
+              isDialOpen.value = false;
+              return false;
+            }
+            return true;
+          },
+          child: Center(
+            child: Text(
+              'You haven\'t logged any food for today',
+              style: TextStyle(color: primaryText, fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
         ),
+        floatingActionButton: _buildActionButton(isDialOpen, journal),
       );
     }
 
@@ -340,55 +405,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      floatingActionButton: SpeedDial(
-        openCloseDial: isDialOpen,
-        icon: Icons.add,
-        activeIcon: Icons.close,
-        iconTheme: IconThemeData(color: darkGrey),
-        backgroundColor: green,
-        overlayColor: lightGrey,
-        children: [
-          SpeedDialChild(
-            child: Icon(
-              Icons.calculate_rounded,
-              color: darkGrey,
-            ),
-            backgroundColor: green,
-            label: 'Enter Manually',
-            labelStyle: TextStyle(fontSize: 18.0, color: Colors.black),
-            labelBackgroundColor: lightGrey,
-            onTap: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) => _buildBottomSheet(context, journal),
-                isScrollControlled: true,
-              );
-            },
-          ),
-          SpeedDialChild(
-            child: Icon(
-              Icons.camera_alt,
-              color: darkGrey,
-            ),
-            backgroundColor: green,
-            label: 'Scan a Barcode',
-            labelStyle: TextStyle(fontSize: 18.0, color: Colors.black),
-            labelBackgroundColor: lightGrey,
-            onTap: _showDialog,
-          ),
-          SpeedDialChild(
-            child: Icon(
-              Icons.search,
-              color: darkGrey,
-            ),
-            backgroundColor: green,
-            label: 'Search Online',
-            labelStyle: TextStyle(fontSize: 18.0, color: Colors.black),
-            labelBackgroundColor: lightGrey,
-            onTap: _showDialog,
-          ),
-        ],
-      ),
+      floatingActionButton: _buildActionButton(isDialOpen, journal),
     );
   }
 
